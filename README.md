@@ -382,6 +382,10 @@ enob_eval.m
 
 ---
 
+## Note
+
+Architecture illustrations were generated using AI-assisted design tools and edited to match the implemented Delta-Sigma ADC architecture.
+
 # References
 
 1. Richard Schreier and Gabor C. Temes, *Understanding Delta-Sigma Data Converters*. IEEE Press/Wiley-Interscience, 2005.
