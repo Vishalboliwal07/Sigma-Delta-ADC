@@ -1,11 +1,9 @@
 
-![MATLAB](https://img.shields.io/badge/MATLAB-R2025b-orange)
+![MATLAB](https://img.shields.io/badge/MATLAB-R2025a-orange)
 ![Verilog](https://img.shields.io/badge/HDL-Verilog-blue)
 ![Vivado](https://img.shields.io/badge/Xilinx-Vivado-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-
-# Sigma-Delta-ADC
 
 # 20-bit Delta-Sigma ADC: Behavioral Modeling, Fixed-Point Design & RTL Implementation
 
