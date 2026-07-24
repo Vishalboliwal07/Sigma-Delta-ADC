@@ -7,6 +7,14 @@
 
 # 20-bit Delta-Sigma ADC: Behavioral Modeling, Fixed-Point Design & RTL Implementation
 
+## Project Status
+
+- ✅ Behavioral Modeling Complete
+- ✅ Fixed-Point Design Complete
+- ✅ RTL Implementation Complete
+- ✅ Bit-Exact Verification Complete
+- ✅ Hardware Performance Evaluation Complete
+
 A complete end-to-end implementation of a **single-bit 2nd-order Delta-Sigma Analog-to-Digital Converter (ΔΣ ADC)**, including behavioral modeling, fixed-point hardware conversion, Verilog RTL implementation, and bit-exact hardware verification.
 
 The project follows a complete DSP hardware design flow:
@@ -38,6 +46,16 @@ The implementation includes:
 - Bit-Exact MATLAB ↔ RTL Verification
 - FFT-Based Hardware Performance Evaluation
 
+## Key Features
+
+- End-to-end Delta-Sigma ADC design flow from behavioral modeling to RTL implementation.
+- Second-order single-bit discrete-time ΔΣ modulator.
+- Multi-stage decimation using **SINC³ CIC (R = 64)** and **FIR Compensation (R = 4)**.
+- Hardware-efficient folded FIR architecture reducing multipliers from **101 to 51**.
+- Complete fixed-point conversion including 19-bit CIC wraparound and 35-bit MAC accumulation.
+- Bit-exact MATLAB ↔ Verilog RTL verification with **0 LSB steady-state discrepancy**.
+- FFT-based hardware performance evaluation and ENOB characterization.
+
 ---
 
 # System Architecture
@@ -45,6 +63,22 @@ The implementation includes:
 <p align="center">
 <img src="docs/architecture/system_architecture.png" width="900">
 </p>
+
+## Design Specifications
+
+| Parameter | Value |
+|-----------|------:|
+| ADC Architecture | Second-Order Single-Bit ΔΣ |
+| Output Resolution | 20-bit |
+| Target ENOB | 16-bit Class |
+| Behavioral ENOB | ~15.83 bits |
+| Hardware ENOB | ~14.90 bits |
+| Oversampling Ratio | 256 |
+| CIC Filter | SINC³ (R = 64) |
+| FIR Filter | Compensation FIR (R = 4) |
+| CIC Register Width | 19 bits |
+| FIR MAC Width | 35 bits |
+| FIR Coefficient Format | Q1.15 |
 
 Pipeline:
 
@@ -70,6 +104,28 @@ FFT / ENOB Evaluation
 ```
 
 ---
+
+## Design Flow
+
+```
+Behavioral Model
+        │
+        ▼
+Architecture Selection
+        │
+        ▼
+Fixed-Point Conversion
+        │
+        ▼
+RTL Implementation
+        │
+        ▼
+MATLAB ↔ RTL Verification
+        │
+        ▼
+Hardware Performance Evaluation
+```
+
 
 # Phase 1 — Behavioral Modeling
 
@@ -130,15 +186,13 @@ Implemented
 - Folded symmetric FIR
 - 20-bit output rounding
 
-Hardware optimizations
+### Hardware Optimizations
 
-```
-101 Multipliers
-
-↓
-
-51 Multipliers
-```
+- Folded symmetric FIR implementation
+- Multiplier reduction: **101 → 51**
+- 19-bit CIC datapath sizing
+- 35-bit MAC accumulator
+- Hardware-equivalent rounding
 
 Verification
 
@@ -180,19 +234,14 @@ The compensation FIR corrects the passband droop introduced by the CIC filter wh
 
 # Phase 3 — Verilog RTL Implementation
 
-Implemented modules
-
-```
-cic_integrator_stage.v
-
-cic_comb_stage.v
-
-cic_top.v
-
-fir_compensation_stage.v
-
-adc_backend_top.v
-```
+| Module | Function |
+|---------|----------|
+| `cic_integrator_stage.v` | CIC Integrator Stage |
+| `cic_comb_stage.v` | CIC Comb Stage |
+| `cic_top.v` | Complete CIC Decimator |
+| `fir_compensation_stage.v` | Folded FIR Compensation Filter |
+| `adc_backend_top.v` | Top-Level ADC Backend |
+| `tb_adc_backend.v` | RTL Testbench |
 
 RTL Features
 
@@ -257,6 +306,17 @@ Verification Results
 <img src="docs/results/Verification.png" width="850">
 </p>
 
+### Verification Summary
+
+✔ RTL matches MATLAB bit-true model exactly.
+
+✔ Maximum steady-state discrepancy = **0 LSB**
+
+✔ Hardware implementation preserves fixed-point ENOB.
+
+✔ Complete functional verification performed in Vivado.
+
+
 The Verilog RTL reproduces the MATLAB bit-true model exactly, confirming functional correctness of the hardware implementation.
 
 ---
@@ -273,92 +333,45 @@ FFT-based evaluation of the RTL output confirms the expected spectral characteri
 
 # Results
 
-| Metric | Value |
-|---------|------:|
-| Modulator | 2nd Order Single Bit |
-| OSR | 256 |
-| CIC | SINC³ (R=64) |
-| FIR | Compensation Filter (R=4) |
-| CIC Width | 19 bits |
-| FIR MAC | 35 bits |
-| FIR Coefficients | 16-bit Q1.15 |
-| FIR Multipliers | 51 |
-| Output Width | 20 bits |
-| Behavioral Floating-Point ENOB | ~15.83 bits |
-| MATLAB Bit-True ENOB | ~14.90 bits |
-| RTL Hardware ENOB | ~14.90 bits |
-| MATLAB ↔ RTL Verification | **0 LSB Steady-State Error** |
+| Metric | Behavioral | Bit-True | RTL |
+|---------|-----------:|----------:|----:|
+| Modulator | 2nd Order | 2nd Order | 2nd Order |
+| OSR | 256 | 256 | 256 |
+| CIC | SINC³ | SINC³ | SINC³ |
+| FIR | Compensation | Compensation | Compensation |
+| CIC Width | — | 19 bits | 19 bits |
+| FIR MAC | — | 35 bits | 35 bits |
+| FIR Multipliers | — | 51 | 51 |
+| ENOB | 15.83 bits | 14.90 bits | 14.90 bits |
+| MATLAB ↔ RTL Error | — | — | **0 LSB** |
 
 ---
 
-# Repository Structure
-
-```text
-20-bit-delta-sigma-adc/
-
-├── docs/
-├── matlab/
-├── rtl/
-├── verification/
-├── vivado/
-└── README.md
-```
-
----
 
 # How to Run
 
-## Phase 1 – Behavioral Modeling
+## Execution Order
 
-```text
-main_adc_behavioral.m
+### Phase 1
 
-↓
+1. `main_adc_behavioral.m`
+2. `main_adc_sweep.m`
+3. `main_adc_broadband.m`
 
-main_adc_sweep.m
+### Phase 2
 
-↓
+1. `fixed_point_Verification.m`
+2. `design_cic_comp_fir.m`
+3. `filter_freq_response.m`
+4. `final_quantization_Exp.m`
 
-main_adc_broadband.m
-```
+### Phase 3
 
----
+1. `sin_wave.m`
+2. Run Vivado Simulation
+3. `enob_eval.m`
 
-## Phase 2 – Fixed-Point Design
 
-```text
-fixed_point_Verification.m
-
-↓
-
-design_cic_comp_fir.m
-
-↓
-
-filter_freq_response.m
-
-↓
-
-final_quantization_Exp.m
-```
-
----
-
-## Phase 3 – RTL Verification
-
-```text
-sin_wave.m
-
-↓
-
-Vivado Simulation
-
-↓
-
-enob_eval.m
-```
-
----
 
 # Tools Used
 
@@ -380,7 +393,9 @@ enob_eval.m
 
 ---
 
-## Note
+## Notes
+
+This project was completed as part of the **EMBED Club** hardware design initiative at **Indian Institute of Technology Gandhinagar**.
 
 Architecture illustrations were generated using AI-assisted design tools and edited to match the implemented Delta-Sigma ADC architecture.
 
