@@ -70,8 +70,9 @@ The implementation includes:
 |-----------|------:|
 | ADC Architecture | Second-Order Single-Bit ΔΣ |
 | Output Resolution | 20-bit |
+| Master Clock | 512 kHz |
 | Target ENOB | 16-bit Class |
-| Behavioral ENOB | ~15.83 bits |
+| Behavioral Floating-Point ENOB ≈ 15.83 bits | ~15.83 bits |
 | Hardware ENOB | ~14.90 bits |
 | Oversampling Ratio | 256 |
 | CIC Filter | SINC³ (R = 64) |
@@ -147,7 +148,7 @@ Validation
 Output
 
 - Selected **2nd-order single-bit architecture**
-- Behavioral ENOB ≈ **15.83 bits**
+- Behavioral Floating-Point ENOB ≈ 15.83 bits ≈ **15.83 bits**
 
 ## ENOB Characterization
 
@@ -330,6 +331,18 @@ The Verilog RTL reproduces the MATLAB bit-true model exactly, confirming functio
 FFT-based evaluation of the RTL output confirms the expected spectral characteristics and measured hardware ENOB.
 
 ---
+
+# Innovation
+
+Several hardware-oriented optimizations were implemented to improve computational efficiency while preserving numerical accuracy:
+
+- Folded symmetric FIR implementation reducing multipliers from **101 to 51**.
+- Exact 19-bit Hogenauer wraparound implementation for the CIC filter.
+- Hardware-equivalent 35-bit MAC accumulator.
+- Round-to-nearest output logic instead of simple truncation.
+- Complete bit-true MATLAB reference matching the Verilog RTL with **0 LSB steady-state error**.
+
+
 
 # Results
 
