@@ -395,7 +395,6 @@ FFT-based evaluation of the RTL output confirms the expected spectral characteri
 
 ## Notes
 
-This project was completed as part of the **EMBED Club** hardware design initiative at **Indian Institute of Technology Gandhinagar**.
 
 Architecture illustrations were generated using AI-assisted design tools and edited to match the implemented Delta-Sigma ADC architecture.
 
